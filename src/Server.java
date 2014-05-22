@@ -38,9 +38,9 @@ public class Server {
 
 
     public List<Farmacie> getPlaces (double lat, double lng) {
+        // test for new commit
 
         Places.Response<List<Place>> mResponse = null;
-
         Places.Response<Place> mPlaceResponse = null;
 
         String[] noOpenHours = new String[3];
