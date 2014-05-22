@@ -1,3 +1,5 @@
+package places;
+
 import com.google.code.gsonrmi.Parameter;
 import com.google.code.gsonrmi.annotations.RMI;
 import com.google.code.gsonrmi.serializer.ExceptionSerializer;
@@ -14,7 +16,8 @@ import com.google.gson.GsonBuilder;
 
 import net.sf.sprockets.google.Place;
 import net.sf.sprockets.google.Places;
-import places.Farmacie;
+import places.model.Farmacie;
+import places.util.TimeUtils;
 
 
 import java.io.IOException;
@@ -36,15 +39,13 @@ public class Server {
 
 
 
-
     public List<Farmacie> getPlaces (double lat, double lng) {
-        // test for new commit
 
         Places.Response<List<Place>> mResponse = null;
         Places.Response<Place> mPlaceResponse = null;
 
         String[] noOpenHours = new String[3];
-        noOpenHours[0]=noOpenHours[1]=noOpenHours[2] = "Unavailable";
+        noOpenHours[0] =noOpenHours[1] = noOpenHours[2] = "Unavailable";
 
         try {
 
@@ -63,8 +64,14 @@ public class Server {
             e.printStackTrace();
         }
 
-        Places.Response.Status status = mResponse.getStatus();
-        List<Place> places = mResponse.getResult();
+        Places.Response.Status status = null;
+        List<Place> places = null;
+
+        if (mResponse != null) {
+           status = mResponse.getStatus();
+           places = mResponse.getResult();
+        }
+
 
         List<Farmacie> pharmacies = new ArrayList<Farmacie>();
 
@@ -113,7 +120,7 @@ public class Server {
                     pharmacy.setUrl("Currently not available");
 
                 if (detailPlace.getOpeningHours() != null)
-                    pharmacy.setOpenHours(convertOpeningHoursToString(detailPlace.getOpeningHours()));
+                    pharmacy.setOpenHours(TimeUtils.convertOpeningHoursToString(detailPlace.getOpeningHours()));
                 else {
 
                     pharmacy.setOpenHours(noOpenHours);
@@ -137,44 +144,7 @@ public class Server {
 
     }
 
-    public String doubleZeroAtMinute(int minute) {
-        if (minute == 0)
-            return "00";
-        else
-            return minute+"";
-    }
 
-    public String[] convertOpeningHoursToString(List<Place.OpeningHours> list) {
-
-        String[] openHours = new String[3];
-
-        Place.OpeningHours workingDay = list.get(0); // looking at monday
-        String workingOpenHour = workingDay.getOpenHour() + ":" + doubleZeroAtMinute(workingDay.getOpenMinute());
-        String workingCloseHour = workingDay.getCloseHour() + ":" + doubleZeroAtMinute(workingDay.getCloseMinute());
-
-        openHours[0] = workingOpenHour + " - " + workingCloseHour;
-
-        if (list.size() - 1 > 4) {
-            // avem program pentru weekend
-            // exista si 6
-            Place.OpeningHours saturday = list.get(4);
-            String saturdayOpenHour = saturday.getOpenHour() + ":" + doubleZeroAtMinute(saturday.getOpenMinute());
-            String saturdayCloseHour = saturday.getCloseHour() + ":" + doubleZeroAtMinute(saturday.getCloseMinute());
-
-            openHours[1] = saturdayOpenHour + " - " + saturdayCloseHour;
-
-            Place.OpeningHours sunday = list.get(5);
-            String sundayOpenHour = sunday.getOpenHour() + ":" + doubleZeroAtMinute(sunday.getOpenMinute());
-            String sundayCloseHour = sunday.getCloseHour() + ":" + doubleZeroAtMinute(sunday.getCloseMinute());
-
-            openHours[2] = sundayOpenHour + " - " + sundayCloseHour;
-
-        } else {
-            openHours[1]=openHours[2]="inchis";
-        }
-
-        return openHours;
-    }
 
     public static void main(String[] args){
         System.setProperty("javax.net.ssl.keyStore","/home/motan/tools/gson_server/mySrvKeystore");
@@ -182,7 +152,7 @@ public class Server {
 
         Server.getInstance();
 
-//        getPlaces();
+        // test -> getPlaces() is accesed by the Android device.
     }
 
 
@@ -233,14 +203,12 @@ public class Server {
         // String received from Android
         System.out.println(text + "*" + lat + "/" + lng);
 
-        List<Farmacie> pharmacies = getPlaces(lat, lng);
-
         //1. primeste lat si lng
         // 2. face query bazat pe ele
         // 3. returneaza rezultatul
 
         // Response to it
-        return pharmacies;
+        return getPlaces(lat, lng);
     }
 
 

@@ -1,4 +1,4 @@
-package places;
+package places.model;
 /**
  * Pharmacy class model, used to store info about one entity.
  */
