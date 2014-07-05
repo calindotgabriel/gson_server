@@ -33,7 +33,9 @@ public class PlacesProvider {
 
             mResponse = Places.nearbySearch(new Places.Params()
                             .location(lat, lng).radius(5000).types("pharmacy"),
-                    Places.Field.NAME, Places.Field.VICINITY, Places.Field.GEOMETRY,
+                    Places.Field.NAME,
+                    Places.Field.VICINITY,
+                    Places.Field.GEOMETRY,
                     Places.Field.OPEN_NOW
             );
 
@@ -67,7 +69,11 @@ public class PlacesProvider {
 
                 try {
                     mPlaceResponse = Places.details(new Places.Params().reference(place.getReference()),
-                            Places.Field.FORMATTED_PHONE_NUMBER, Places.Field.OPEN_NOW, Places.Field.OPENING_HOURS, Places.Field.URL);
+                            Places.Field.FORMATTED_PHONE_NUMBER,
+                            Places.Field.OPEN_NOW,
+                            Places.Field.OPENING_HOURS,
+                            Places.Field.URL);
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -107,8 +113,14 @@ public class PlacesProvider {
 
                 pharmacies.add(pharmacy);
 
-                System.out.println(pharmacy.getName() + " - " + pharmacy.getVicinity() + " - " +
-                        pharmacy.getLat() + " / " + pharmacy.getLng() + "\n" + "open now:" + pharmacy.getOpenNow());
+                System.out.println
+                        ("\n________________________" +
+                         pharmacy.getName() +  "\n" +
+                         pharmacy.getVicinity()+ "\n" +
+                         pharmacy.getLat() + "/" +
+                         pharmacy.getLng() + "\n" +
+                         "open now:" + pharmacy.getOpenNow() +
+                         "\n________________________");
 
 
 

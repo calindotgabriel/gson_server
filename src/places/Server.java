@@ -41,6 +41,8 @@ public class Server {
 
         Server.getInstance();
 
+        Db.getInstance();
+
     }
 
 
