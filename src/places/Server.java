@@ -39,9 +39,9 @@ public class Server {
         System.setProperty("javax.net.ssl.keyStore","/home/motan/tools/gson_server/mySrvKeystore");
         System.setProperty("javax.net.ssl.keyStorePassword", "123456");
 
-        Server.getInstance();
+//        Server.getInstance();
 
-        Db.getInstance();
+        Db.startDb();
 
     }
 

@@ -2,7 +2,6 @@ package places;
 
 import places.util.ReadFile;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -15,13 +14,7 @@ import java.sql.Statement;
  */
 public class Db {
 
-    private static Db instance;
 
-    public static Db getInstance() {
-        if (instance == null)
-            startDb();
-        return instance;
-    }
 
     public static void startDb() {
 
@@ -41,7 +34,7 @@ public class Db {
 
     }
 
-        public static void createPhTable (Connection conn) throws NullPointerException{
+        public static void createPhTable (Connection conn) throws NullPointerException {
 
             String sql = null;
 
