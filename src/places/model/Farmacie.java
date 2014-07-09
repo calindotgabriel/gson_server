@@ -14,7 +14,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table (name = "FARMACII")
-public class Farmacie extends Item implements Serializable {
+public class Farmacie implements Serializable {
 
 
     @Id
@@ -22,16 +22,19 @@ public class Farmacie extends Item implements Serializable {
     @Column (name = "ID", unique = true, nullable = false)
     private int id;
 
-    @Column (name="OPEN_HOURS", length = 20)
+    @Column (name = "NAME", length = 50, nullable = false)
+    private String name;
+
+    @Column (name="OPEN_HOURS", length = 40)
     private String[] openHours;
 
-    @Column (name="VICINITY", length = 50)
+    @Column (name="VICINITY", length = 100)
     private String vicinity;
 
-    @Column (name="PH_NUMBER", length = 14)
+    @Column (name="PH_NUMBER", length = 20)
     private String phNumber;
 
-    @Column (name="URL", length = 25)
+    @Column (name="URL", length = 150)
     private String url;
 
     @Column (name="LAT", precision = 12, scale = 10)
@@ -46,8 +49,7 @@ public class Farmacie extends Item implements Serializable {
     @Column (name = "OPEN_NOW" )
     private int openNow;
 
-    @Column (name = "NAME", length = 20)
-    private String name = super.getName();
+
 
 
 
