@@ -3,6 +3,7 @@ package places;
 import net.sf.sprockets.google.Place;
 import net.sf.sprockets.google.Places;
 import places.model.Farmacie;
+import places.util.Log;
 import places.util.TimeUtils;
 
 import java.io.IOException;
@@ -88,10 +89,11 @@ public class PlacesProvider {
                 pharmacy.setLat(place.getLatitude());
                 pharmacy.setLng(place.getLongitude());
 
+
                 if (detailPlace.getOpenNow() != null)
-                    pharmacy.setOpenNow(detailPlace.getOpenNow()); //TODO
+                    pharmacy.setOpenNow(1); //TODO
                 else
-                    pharmacy.setOpenNow(false);
+                    pharmacy.setOpenNow(0);
 
                 if (detailPlace.getFormattedPhoneNumber() != null)
                     pharmacy.setPhNumber(detailPlace.getFormattedPhoneNumber());
@@ -113,16 +115,7 @@ public class PlacesProvider {
 
                 pharmacies.add(pharmacy);
 
-                System.out.println
-                        ("\n________________________" +
-                         pharmacy.getName() +  "\n" +
-                         pharmacy.getVicinity()+ "\n" +
-                         pharmacy.getLat() + "/" +
-                         pharmacy.getLng() + "\n" +
-                         "open now:" + pharmacy.getOpenNow() +
-                         "\n________________________");
-
-
+                Log.debug(pharmacy);
 
             }
         } else if (status == Places.Response.Status.ZERO_RESULTS) {
@@ -134,5 +127,7 @@ public class PlacesProvider {
         return pharmacies;
 
     }
+
+
 
 }

@@ -1,57 +1,67 @@
 package places;
 
-import places.util.ReadFile;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import places.model.Farmacie;
+import places.util.HibernateUtil;
+import places.util.Log;
 
-import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author motan
- * @date 7/5/14
+ * @date 7/7/14
  */
 public class Db {
 
 
+    public static void savePharmacy(Farmacie f) {
 
-    public static void startDb() {
+        Session s = HibernateUtil.getSessionFactory().openSession();
+        s.beginTransaction();
 
-        String dbURL = "jdbc:derby:mediTrackDb/db;create=true;user=motan;password=swag";
+        s.save(f);
+        s.getTransaction().commit();
 
-        try {
-            DriverManager.registerDriver(new org.apache.derby.jdbc.EmbeddedDriver());
-            Connection conn = DriverManager.getConnection(dbURL);
+        s.close();
+    }
 
-            createPhTable(conn);
+    public static void savePharmacylist(List<Farmacie> fs) {
 
-            conn.close();
+        Session s = HibernateUtil.getSessionFactory().openSession();
+        s.beginTransaction();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+        for (Farmacie f : fs) {
+            s.save(f);
         }
 
+        s.getTransaction().commit();
+
+        s.close();
     }
 
-        public static void createPhTable (Connection conn) throws NullPointerException {
+    public static void showRecords() {
 
-            String sql = null;
-
-            try {
-                sql = ReadFile.read("/home/motan/tools/gson_server/src/places/createPhTable.sql", StandardCharsets.UTF_8);
-
-                Statement st = conn.createStatement();
-                st.executeUpdate(sql);
-
-                System.out.println("Created table!");
-
-                st.close();
-            }
-             catch (Exception e) {
-                e.printStackTrace();
-            }
+        Session s = HibernateUtil.getSessionFactory().openSession();
+        List farmacii = s.createQuery("FROM Farmacie").list();
 
 
+        Transaction t = s.beginTransaction();
+
+        for (Iterator i = farmacii.iterator(); i.hasNext();) {
+            Farmacie f = (Farmacie) i.next();
+
+            System.out.println("--------------- DB LOG ---------------------");
+            Log.debug(f);
+        }
+
+        t.commit();
+
+        s.close();
     }
+
+
 }

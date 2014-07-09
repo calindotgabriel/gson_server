@@ -39,9 +39,7 @@ public class Server {
         System.setProperty("javax.net.ssl.keyStore","/home/motan/tools/gson_server/mySrvKeystore");
         System.setProperty("javax.net.ssl.keyStorePassword", "123456");
 
-//        Server.getInstance();
-
-        Db.startDb();
+        Server.getInstance();
 
     }
 
@@ -84,19 +82,21 @@ public class Server {
         return instance;
         }
 
-
+    /*
+     * Method called from Android
+     */
     @RMI
     public List<Farmacie> test(String text, double lat, double lng){
 
-        // String received from Android
         System.out.println(text + "*" + lat + "/" + lng);
 
-        //1. primeste lat si lng
-        // 2. face query bazat pe ele
-        // 3. returneaza rezultatul
+        List<Farmacie> fs = PlacesProvider.getPlaces(lat, lng);
 
-        // Response to it
-        return PlacesProvider.getPlaces(lat, lng);
+        Db.savePharmacylist(fs);
+
+        Db.showRecords();
+
+        return fs;
     }
 
 
