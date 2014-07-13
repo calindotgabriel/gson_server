@@ -20,11 +20,12 @@ public class PlacesProvider {
 
     public static List<Farmacie> getPlaces (double lat, double lng) {
 
+
         Places.Response<List<Place>> mResponse = null;
         Places.Response<Place> mPlaceResponse = null;
 
         String[] noOpenHours = new String[3];
-        noOpenHours[0] =noOpenHours[1] = noOpenHours[2] = UNAVAILABLE;
+        noOpenHours[0] = noOpenHours[1] = noOpenHours[2] = UNAVAILABLE;
 
         try {
 
@@ -58,16 +59,6 @@ public class PlacesProvider {
 
         if (status == Places.Response.Status.OK && places != null) {
             for (Place place : places) {
-//                System.out.println(place.getName() + " - " + place.getVicinity() + " - " + place.getLatitude() + " / " + place.getLongitude());
-
-/*                try {
-                mPlaceResponse = Places.details(new Places.Params()
-                    .reference(""), Places.Field.OPENING_HOURS);
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }*/
-
                 try {
                     mPlaceResponse = Places.details(new Places.Params().reference(place.getReference()),
                             Places.Field.FORMATTED_PHONE_NUMBER,
@@ -81,41 +72,55 @@ public class PlacesProvider {
 
                 Place detailPlace = mPlaceResponse.getResult();
 
-
-                Farmacie pharmacy = new Farmacie();
-                pharmacy.setName(place.getName());
-                pharmacy.setVicinity(place.getVicinity());
-                pharmacy.setCompensat(1); //TODO
-                pharmacy.setLat(place.getLatitude());
-                pharmacy.setLng(place.getLongitude());
+                String mName = place.getName();
+                Log.fName = mName; // use this just for logging
+                String mVicinity = place.getVicinity();
+                double mLat = place.getLatitude();
+                double mLng = place.getLongitude();
 
 
-                if (detailPlace.getOpenNow() != null)
-                    pharmacy.setOpenNow(1); //TODO
-                else
-                    pharmacy.setOpenNow(0);
+                Farmacie f = new Farmacie();
+                f.setName(mName);
+                f.setVicinity(mVicinity);
+                f.setCompensat(2); //TODO
+                f.setLat(mLat);
+                f.setLng(mLng);
 
-                if (detailPlace.getFormattedPhoneNumber() != null)
-                    pharmacy.setPhNumber(detailPlace.getFormattedPhoneNumber());
-                else
-                    pharmacy.setPhNumber(UNAVAILABLE);
 
-                if (detailPlace.getUrl() != null)
-                    pharmacy.setUrl(detailPlace.getUrl());
-                else
-                    pharmacy.setUrl(UNAVAILABLE);
-
-                if (detailPlace.getOpeningHours() != null)
-                    pharmacy.setOpenHours
-                            (TimeUtils.convertOpeningHoursToString(detailPlace.getOpeningHours()));
+                if (null != detailPlace.getOpenNow())
+                    if (detailPlace.getOpenNow())
+                        f.setOpenNow(1);
+                    else f.setOpenNow(0);
                 else {
-
-                    pharmacy.setOpenHours(noOpenHours);
+                    f.setOpenNow(2);
+                    Log.nullField("@ open now");
                 }
 
-                pharmacies.add(pharmacy);
 
-                Log.debug(pharmacy);
+                if (null != detailPlace.getFormattedPhoneNumber())
+                    f.setPhNumber(detailPlace.getFormattedPhoneNumber());
+                else {
+                    f.setPhNumber(UNAVAILABLE);
+                    Log.nullField("@ ph number");
+                }
+
+                if (null != detailPlace.getUrl())
+                    f.setUrl(detailPlace.getUrl());
+                else {
+                    f.setUrl(UNAVAILABLE);
+                    Log.nullField("@ url ");
+                }
+
+                if (null != detailPlace.getOpeningHours())
+                    f.setOpenHours(TimeUtils.convertOpeningHoursToString(detailPlace.getOpeningHours()));
+                else {
+                    f.setOpenHours(noOpenHours);
+                    Log.nullField("@ open hours ");
+                }
+
+                pharmacies.add(f);
+
+                Log.debug(f);
 
             }
         } else if (status == Places.Response.Status.ZERO_RESULTS) {

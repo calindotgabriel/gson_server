@@ -19,7 +19,7 @@ public class Item implements ItemInterface {
     }
 
 
-    public String getDescription() {
+    public String getItemDescription() {
         return name;
     }
 

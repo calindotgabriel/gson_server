@@ -14,7 +14,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table (name = "FARMACII")
-public class Farmacie implements Serializable {
+public class Farmacie implements Serializable, ItemInterface {
 
 
     @Id
@@ -52,7 +52,6 @@ public class Farmacie implements Serializable {
 
 
 
-
     public Farmacie() {
     }
 
@@ -73,7 +72,11 @@ public class Farmacie implements Serializable {
         this.name = name;
     }
 
-
+    /*
+     0 - closed    (provided
+     1 - open        by google)
+     2 - do not know (null from google)
+     */
     public int getOpenNow() {
         return openNow;
     }
@@ -140,5 +143,8 @@ public class Farmacie implements Serializable {
         this.url = url;
     }
 
-
+    @Override
+    public String getItemDescription() {
+        return name;
+    }
 }

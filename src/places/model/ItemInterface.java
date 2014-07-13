@@ -6,5 +6,5 @@ package places.model;
  */
 public interface ItemInterface {
 
-    public String getDescription();
+    public String getItemDescription();
 }
