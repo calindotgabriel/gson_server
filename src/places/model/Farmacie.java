@@ -1,8 +1,12 @@
 package places.model;
 
+import org.hibernate.annotations.*;
 import places.util.DbStringConvert;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Index;
+import javax.persistence.Table;
 
 import java.io.Serializable;
 
@@ -13,14 +17,20 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 
 @Entity
-@Table (name = "FARMACII")
+@DynamicUpdate
+@Table (name = "FARMACII", indexes = {
+        @Index(columnList = "PLACES_ID", name = "GOOGLE_ID") })
+
+
 public class Farmacie implements Serializable, ItemInterface {
 
 
     @Id
     @GeneratedValue (strategy = IDENTITY)
-    @Column (name = "ID", unique = true, nullable = false)
     private int id;
+
+    @Column (name = "PLACES_ID", length = 30, unique = true, nullable = false)
+    private String placesId;
 
     @Column (name = "NAME", length = 50, nullable = false)
     private String name;
@@ -43,11 +53,13 @@ public class Farmacie implements Serializable, ItemInterface {
     @Column (name="LNG", precision = 12, scale = 10)
     private double lng;
 
-    @Column (name="COMPENSAT")
-    private int compensat;
+    @Column (name="COMPENSAT_DA")
+    private int compensat_da;
 
-    @Column (name = "OPEN_NOW" )
-    private int openNow;
+    @Column (name="COMPENSAT_NU")
+    private int compensat_nu;
+
+
 
 
 
@@ -64,6 +76,13 @@ public class Farmacie implements Serializable, ItemInterface {
         this.id = id;
     }
 
+    public String getPlacesId() {
+        return placesId;
+    }
+    public void setPlacesId(String placesId) {
+        this.placesId = placesId;
+    }
+
     public String getName() {
         return name;
     }
@@ -77,12 +96,6 @@ public class Farmacie implements Serializable, ItemInterface {
      1 - open        by google)
      2 - do not know (null from google)
      */
-    public int getOpenNow() {
-        return openNow;
-    }
-    public void setOpenNow(int openNow) {
-        this.openNow = openNow;
-    }
 
 
     public String getVicinity() {
@@ -120,14 +133,19 @@ public class Farmacie implements Serializable, ItemInterface {
         this.lng = lng;
     }
 
-
-    public int getCompensat() {
-        return compensat;
+    public int getCompensatDa() {
+        return compensat_da;
     }
-    public void setCompensat(int compensat) {
-        this.compensat = compensat;
+    public void setCompensatDa(int compensat_da) {
+        this.compensat_da = compensat_da;
     }
 
+    public int getCompensatNu() {
+        return compensat_nu;
+    }
+    public void setCompensatNu(int compensat_nu) {
+        this.compensat_nu = compensat_nu;
+    }
 
     public String getPhNumber() {
         return phNumber;

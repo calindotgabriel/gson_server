@@ -14,17 +14,13 @@ import com.google.code.gsonrmi.transport.tcp.TcpProxyFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import net.sf.sprockets.google.Place;
-import net.sf.sprockets.google.Places;
 import places.model.Farmacie;
-import places.util.TimeUtils;
+import places.util.Log;
 
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -40,9 +36,7 @@ public class Server {
         System.setProperty("javax.net.ssl.keyStorePassword", "123456");
 
         Server.getInstance();
-
     }
-
 
     public static synchronized Server getInstance(){
 
@@ -78,7 +72,6 @@ public class Server {
             e.printStackTrace();
         }
 
-
         return instance;
         }
 
@@ -93,11 +86,34 @@ public class Server {
         List<Farmacie> fs = PlacesProvider.getPlaces(lat, lng);
 
         Db.savePharmacylist(fs);
+//        Db.showRecords();
 
-        Db.showRecords();
-
-        return fs;
+        return Db.processQueriedPharmacies(fs);
     }
+
+
+    @RMI
+    public Farmacie setCompensatField(String googleId, boolean state) {
+
+        System.out.println(" GOOGLE ID = " + googleId);
+
+        Farmacie f = Db.getPharmacyByGoogleId(googleId);
+
+        if (state) {
+            Db.updateCompensatField(f, true, f.getCompensatDa() + 1);
+            System.out.println("COMPENSAT DA \n" + f.getCompensatDa() + "\n COMPENSAT DA");
+        }
+        else {
+            Db.updateCompensatField(f, false, f.getCompensatNu() + 1);
+            System.out.println("COMPENSAT NU \n" + f.getCompensatDa() + "\n COMPENSAT NU");
+        }
+
+        Log.debug("accesed by compensat", f);
+
+        return f;
+    }
+
+
 
 
 

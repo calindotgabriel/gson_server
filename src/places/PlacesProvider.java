@@ -3,8 +3,8 @@ package places;
 import net.sf.sprockets.google.Place;
 import net.sf.sprockets.google.Places;
 import places.model.Farmacie;
+import places.util.Converter;
 import places.util.Log;
-import places.util.TimeUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,31 +16,19 @@ import java.util.List;
  */
 public class PlacesProvider {
 
-    private static String UNAVAILABLE = "Unavailable";
 
     public static List<Farmacie> getPlaces (double lat, double lng) {
 
-
         Places.Response<List<Place>> mResponse = null;
-        Places.Response<Place> mPlaceResponse = null;
-
-        String[] noOpenHours = new String[3];
-        noOpenHours[0] = noOpenHours[1] = noOpenHours[2] = UNAVAILABLE;
+        Places.Response<Place> mPlaceDetails = null;
 
         try {
-
-/*            mResponse = Places.nearbySearch(new Places.Params()
-                    .location(51.500702, -0.124576).radius(1000).types("food")
-                    .keyword("fish & chips").openNow(), Places.Field.NAME, Places.Field.VICINITY);   */
-
             mResponse = Places.nearbySearch(new Places.Params()
-                            .location(lat, lng).radius(5000).types("pharmacy"),
+                    .location(lat, lng).radius(5000).types("pharmacy"),
                     Places.Field.NAME,
                     Places.Field.VICINITY,
                     Places.Field.GEOMETRY,
-                    Places.Field.OPEN_NOW
-            );
-
+                    Places.Field.OPEN_NOW);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -54,75 +42,32 @@ public class PlacesProvider {
             places = mResponse.getResult();
         }
 
-
         List<Farmacie> pharmacies = new ArrayList<Farmacie>();
 
         if (status == Places.Response.Status.OK && places != null) {
             for (Place place : places) {
                 try {
-                    mPlaceResponse = Places.details(new Places.Params().reference(place.getReference()),
+                    mPlaceDetails = Places.details(new Places.Params()
+                            .placeId(place.getPlaceId().getId()),
                             Places.Field.FORMATTED_PHONE_NUMBER,
                             Places.Field.OPEN_NOW,
                             Places.Field.OPENING_HOURS,
-                            Places.Field.URL);
+                            Places.Field.URL
+                            );
+
 
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 
-                Place detailPlace = mPlaceResponse.getResult();
+        Place detailPlace = mPlaceDetails != null ? mPlaceDetails.getResult() : null;
 
-                String mName = place.getName();
-                Log.fName = mName; // use this just for logging
-                String mVicinity = place.getVicinity();
-                double mLat = place.getLatitude();
-                double mLng = place.getLongitude();
+        Farmacie f = Converter.placesToPharmacy(place, detailPlace);
+        pharmacies.add(f);
 
+        Log.debug(f);
 
-                Farmacie f = new Farmacie();
-                f.setName(mName);
-                f.setVicinity(mVicinity);
-                f.setCompensat(2); //TODO
-                f.setLat(mLat);
-                f.setLng(mLng);
-
-
-                if (null != detailPlace.getOpenNow())
-                    if (detailPlace.getOpenNow())
-                        f.setOpenNow(1);
-                    else f.setOpenNow(0);
-                else {
-                    f.setOpenNow(2);
-                    Log.nullField("@ open now");
-                }
-
-
-                if (null != detailPlace.getFormattedPhoneNumber())
-                    f.setPhNumber(detailPlace.getFormattedPhoneNumber());
-                else {
-                    f.setPhNumber(UNAVAILABLE);
-                    Log.nullField("@ ph number");
-                }
-
-                if (null != detailPlace.getUrl())
-                    f.setUrl(detailPlace.getUrl());
-                else {
-                    f.setUrl(UNAVAILABLE);
-                    Log.nullField("@ url ");
-                }
-
-                if (null != detailPlace.getOpeningHours())
-                    f.setOpenHours(TimeUtils.convertOpeningHoursToString(detailPlace.getOpeningHours()));
-                else {
-                    f.setOpenHours(noOpenHours);
-                    Log.nullField("@ open hours ");
-                }
-
-                pharmacies.add(f);
-
-                Log.debug(f);
-
-            }
+        }
         } else if (status == Places.Response.Status.ZERO_RESULTS) {
             System.out.println("no results");
         } else {

@@ -12,7 +12,6 @@ import java.util.Date;
  */
 public class Log {
 
-    public static String fName;
     public static String clsName = PlacesProvider.class.getName();
 
     private static void err(String errMsg) {
@@ -25,10 +24,12 @@ public class Log {
 
 
     public static void debug(Farmacie f) {
-
         info
                 ("\n**********************\n" +
+                        f.getCompensatDa() + " compensat da \n" +
+                        f.getCompensatNu() + " compensat nu \n" +
                         f.getId() + "\n" +
+                        f.getPlacesId() + "\n" +
                         f.getName() + "\n" +
                         f.getVicinity() + "\n" +
                         f.getLat() + "/" +
@@ -36,13 +37,18 @@ public class Log {
                         f.getPhNumber() + "\n" +
                         f.getOpenHoursString() + "\n" +
                         f.getUrl() + "\n" +
-                        "open now:" + f.getOpenNow() +
                         "\n**********************");
+    }
 
+
+    public static void debug(String specialText, Farmacie f) {
+
+        info("\n***** " + specialText + " *******\n");
+        debug(f);
 
     }
 
     public static void nullField(String field) {
-                err("Null field by " + fName + " at " + field);
+                err("Null field by at " + field);
     }
 }
