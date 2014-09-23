@@ -38,37 +38,38 @@ public class Db {
         s.close();
     }
 
-    public static List<Farmacie> processQueriedPharmacies(List<Farmacie> fs) {
+    public static List<Farmacie> processQueriedPharmacies(List<Farmacie> farmaciiNoi) {
         Session s = HibernateUtil.getSessionFactory().openSession();
 
         s.beginTransaction();
 
-        List farmacii = s.createQuery("FROM Farmacie").list();
+        List farmaciiInDb = s.createQuery("FROM Farmacie").list();
 
 
         boolean isInDb;
-        for (Farmacie qFa : fs) {
+        for (Farmacie f : farmaciiNoi) {
             isInDb = false;
-            for (Iterator i = farmacii.iterator(); i.hasNext() && !isInDb; ) {
+            for (Iterator i = farmaciiInDb.iterator(); i.hasNext() && !isInDb; ) {
                 Farmacie dbFa = (Farmacie) i.next();
-                if (qFa.getPlacesId().equals(dbFa.getPlacesId())) {
+
+                if (f.getPlacesId().equals(dbFa.getPlacesId())) {
                     isInDb = true;
-                    qFa.setId(dbFa.getId());
-                    qFa.setCompensatDa(dbFa.getCompensatDa());
-                    qFa.setCompensatNu(dbFa.getCompensatNu());
-                    System.out.println(" Saw that " + qFa.getName() + " is in db.");
+                    f.setId(dbFa.getId());
+                    f.setCompensatDa(dbFa.getCompensatDa());
+                    f.setCompensatNu(dbFa.getCompensatNu());
+                    System.out.println(" Saw that " + f.getName() + " is in db.");
                 }
             }
             if (!isInDb) {
-                s.save(qFa);
-                System.out.println(" Added new pharmacy " + qFa.getName() + " in db.");
+                s.save(f);
+                System.out.println(" Added new pharmacy " + f.getName() + " in db.");
             }
         }
 
         s.getTransaction().commit();
         s.close();
 
-        return fs;
+        return farmaciiNoi;
     }
 
     public static void showRecords() {

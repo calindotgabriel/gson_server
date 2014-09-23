@@ -52,7 +52,6 @@ public class Server {
                 InetSocketAddress inetSocketAddress = new InetSocketAddress(30310);
                 List<InetSocketAddress> listeningAddresses = Arrays.asList(inetSocketAddress);
 
-
                 TcpProxy tcpProxy = TcpProxyFactory.reflectTcpProxy(SecureTcpProxy.class, listeningAddresses, instance.t, instance.gson, null);
                 tcpProxy.start(); // start the listening on specified port
 
@@ -85,7 +84,7 @@ public class Server {
 
         List<Farmacie> fs = PlacesProvider.getPlaces(lat, lng);
 
-        Db.savePharmacylist(fs);
+//        Db.savePharmacylist(fs);
 //        Db.showRecords();
 
         return Db.processQueriedPharmacies(fs);
